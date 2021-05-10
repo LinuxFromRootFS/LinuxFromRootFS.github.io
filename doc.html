@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Guide LFRFS</title>
+    <title>LFRFS Guide</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Nunito+Sans:300,400,600,700,800,900" rel="stylesheet">
     <link rel="stylesheet" href="scribbler-global.css">
@@ -17,24 +17,32 @@
       <h1 class="logo">LFRFS <span class="logo__thin">Guide</span></h1>
       <ul class="menu">
         <div class="menu__item toggle"><span></span></div>
-        <li class="menu__item"><a href="https://github.com/LinuxFromRootFS/" class="link link--dark"><i class="fa fa-github"></i> Github</a></li>
+        <li class="menu__item"><a href="https://github.com/LinuxFromRootFS" class="link link--dark"><i class="fa fa-github"></i> Github</a></li>
         <li class="menu__item"><a href="index.html" class="link link--dark"><i class="fa fa-home"></i> Home</a></li>
       </ul>
     </nav>
     <div class="wrapper">
       <aside class="doc__nav">
         <ul>
-          <li class="js-btn selected">Get Started</li>
-          <li class="js-btn">Configuration</li>
-          <li class="js-btn">Keybindings</li>
-          <li class="js-btn">Issues</li>
+          <li class="js-btn selected">Introduction</li>
+          <li class="js-btn">What is Linux FS</li>
+          <li class="js-btn">Base Choice</li>
+          <li class="js-btn">Install Base RootFS</li>
         </ul>
       </aside>
       <article class="doc__content">
         <section class="js-section">
-          <h3 class="section__title">Get Started</h3>
-          <p>Learn how to configure settings for Scribbler, such as your syntax highlighting preference and the default saving folder location.</p>
-          <h3 class="section__title">Installation</h3>
+          <h3 class="section__title">Introduction</h3>
+          <p>
+            There are many ways to build your own Linux distribution.
+             But many of them are time consuming like Linux from scratch and you have to compile all the packages yourself.
+              But in the RootFS method you do not need to compile all the packages. You are basically building a distribution
+               or a derivative of existing distributions. This saves time.
+          </p>
+          <p>
+            <b style="color: darkred;">Note :</b> This tutorial currently works for Debian distributions like Ubuntu.
+          </p>
+          <!-- <h3 class="section__title">Installation</h3>
           <div class="code__block code__block--notabs">
             <pre class="code code--block">
               <code>
@@ -48,47 +56,359 @@
                   }
               </code>
             </pre>
-          </div>
+          </div> -->
         </section>
+        <hr style="color: #fe6a6b; border-width: 1px; border-color: #fe6a6a6c; ">
         <section class="js-section">
-          <h3 class="section__title">Configuration</h3>
-          <p>Learn how to configure settings for Scribbler, such as your syntax highlighting preference and the default saving folder location.</p>
+          <h3 class="section__title">What is Linux File Systems</h3>
+          <p>
+            In this article we want to deal with the Linux file system.
+             I have read an article in this area and I do not want to rewrite it because
+              "<a href="https://opensource.com/users/dboth" style="color: crimson;">Mr.David Both</a>" has addressed this subject at "<a href="https://opensource.com/life/16/10/introduction-linux-filesystems" style="color: crimson;">opensource.com</a>". 
+              Thanks to him, we want to share what he said.
+          </p>
+          <h4 class="section__title">Definitions</h4>
+          <p>
+            You may hear people talk about filesystems in a number of different and confusing ways. 
+            The word itself can have multiple meanings, 
+            and you may have to discern the correct meaning from the context of a discussion or document.
+            I will attempt to define the various meanings of the word "filesystem" based 
+            on how I have observed it being used in different circumstances. Note that while attempting to conform to standard 
+            "official" meanings, my intent is to define the term based on its various usages.
+          </p>
+          <p>
+            1. The entire Linux directory structure starting at the top (/) root directory.
+          </p>
+          <p>
+            2. A specific type of data storage format, such as EXT3, EXT4, BTRFS, XFS, and so on. 
+            Linux supports almost 100 types of filesystems, including some very old ones as well as some of the newest. 
+            Each of these filesystem types uses its own metadata structures to define how the data is stored and accessed.
+          </p>
+          <p>
+            3. A partition or logical volume formatted with a specific type of 
+            filesystem that can be mounted on a specified mount point on a Linux filesystem.
+          </p>
+
+          <h4 class="section__title">Basic filesystem functions</h4>
+          <p>
+            Disk storage is a necessity that brings with it some interesting and inescapable details. Obviously,
+             a filesystem is designed to provide space for non-volatile storage of data; that is its ultimate function. However,
+             there are many other important functions that flow from that requirement.
+          </p>
+          <p>
+            All filesystems need to provide a namespace—that is, a naming and organizational methodology.
+             This defines how a file can be named, specifically the length of a filename and the subset of characters
+              that can be used for filenames out of the total set of characters available. It also defines the logical
+               structure of the data on a disk, such as the use of directories for organizing files instead of just lumping
+                them all together in a single, huge conglomeration of files.
+          </p>
+          <p>
+            Once the namespace has been defined, a metadata structure is necessary to provide the logical foundation for that
+             namespace. This includes the data structures required to support a hierarchical directory structure;
+              structures to determine which blocks of space on the disk are used and which are available; structures
+               that allow for maintaining the names of the files and directories; information about the files such as their
+                size and times they were created, modified or last accessed; and the location or locations of the data belonging
+                 to the file on the disk. Other metadata is used to store high-level information about the subdivisions
+                  of the disk, such as logical volumes and partitions. This higher-level metadata and the structures it
+                   represents contain the information describing the filesystem stored on the drive or partition, but
+                    is separate from and independent of the filesystem metadata.
+          </p>
+          <p>
+            Filesystems also require an Application Programming Interface (API) that provides access to system
+             function calls which manipulate filesystem objects like files and directories. APIs provide for tasks
+              such as creating, moving, and deleting files. It also provides algorithms that determine things like
+               where a file is placed on a filesystem. Such algorithms may account for objectives such as speed or minimizing
+                disk fragmentation.
+          </p>
+          <p>
+            Modern filesystems also provide a security model, which is a scheme for defining access
+             rights to files and directories. The Linux filesystem security model helps to ensure that users only have
+              access to their own files and not those of others or the operating system itself.
+          </p>
+          <p>
+            The final building block is the software required to implement all of these functions.
+             Linux uses a two-part software implementation as a way to improve both system and programmer efficiency.
+          </p>
+          <br>
+          <center>
+            <img src="img/filesystem_diagram.png">
+          </center>
+          <center style="margin-top: -1%;">
+            <a style="font-size: 14px;">Figure 1: The Linux two-part filesystem software implementation.</a>
+          </center>
+          <br>
+          <p>
+            The first part of this two-part implementation is the Linux virtual filesystem.
+             This virtual filesystem provides a single set of commands for the kernel,
+              and developers, to access all types of filesystems. The virtual filesystem software calls the specific
+               device driver required to interface to the various types of filesystems. The filesystem-specific device drivers are
+                the second part of the implementation. The device driver interprets the standard set of filesystem
+                 commands to ones specific to the type of filesystem on the partition or logical volume.
+          </p>
+          <h4 class="section__title">Directory structure</h4>
+          <p>
+            As a usually very organized Virgo, I like things stored in smaller, organized groups rather than in one big bucket.
+             The use of directories helps me to be able to store and then locate the files I want when I am looking for them.
+              Directories are also known as folders because they can be thought of as folders in which files are kept in a sort
+               of physical desktop analogy.
+          </p>
+          <p>
+            In Linux and many other operating systems, directories can be structured in a tree-like hierarchy.
+             The Linux directory structure is well defined and documented in the Linux Filesystem Hierarchy Standard (FHS).
+              Referencing those directories when accessing them is accomplished by using the sequentially deeper directory names
+               connected by forward slashes (/) such as /var/log and /var/spool/mail. These are called paths.
+          </p>
+          <p>
+            The following table provides a very brief list of the standard, well-known, and defined top-level
+             Linux directories and their purposes.
+          </p>
           <table id="customers">
             <tr>
-              <th>Options</th>
-              <th>Value</th>
-              <th>Default</th>
+              <th>Directory</th>
+              <th>Description</th>
             </tr>
             <tr>
-              <td>encryption</td>
-              <td>encrypt all notes before saving. If turned on, it requires password to open the file.</td>
-              <td>false</td>
+              <td>/ (root filesystem)</td>
+              <td>The root filesystem is the top-level directory of the filesystem. It must contain
+                 all of the files required to boot the Linux system before other filesystems are mounted. It must include
+                  all of the required executables and libraries required to boot the remaining filesystems. After the system is
+                   booted, all other filesystems are mounted on standard, well-defined mount points as subdirectories of the
+                    root filesystem.</td>
             </tr>
             <tr>
-              <td>highlighting</td>
-              <td>Show syntax highlight on markdown text.</td>
-              <td>true</td>
+              <td>/bin</td>
+              <td>The /bin directory contains user executable files.</td>
             </tr>
             <tr>
-              <td>prettyTable</td>
-              <td>Render table with Scribbler’s pretty table style.</td>
-              <td>true</td>
+              <td>/boot</td>
+              <td>Contains the static bootloader and kernel executable and configuration files required to boot a Linux computer.</td>
+            </tr>
+            <tr>
+              <td>/dev</td>
+              <td>This directory contains the device files for every hardware device attached to the system.
+                 These are not device drivers, rather they are files that represent each device on the computer
+                  and facilitate access to those devices.</td>
+            </tr>
+            <tr>
+              <td>/etc</td>
+              <td>Contains the local system configuration files for the host computer.</td>
+            </tr>
+            <tr>
+              <td>/home</td>
+              <td>Home directory storage for user files. Each user has a subdirectory in /home.</td>
+            </tr>
+            <tr>
+              <td>/lib</td>
+              <td>Contains shared library files that are required to boot the system.</td>
+            </tr>
+            <tr>
+              <td>/media</td>
+              <td>A place to mount external removable media devices such as USB thumb drives that may be connected to the host.</td>
+            </tr>
+            <tr>
+              <td>/mnt</td>
+              <td>A temporary mountpoint for regular filesystems (as in not removable media)
+                 that can be used while the administrator is repairing or working on a filesystem.</td>
+            </tr>
+            <tr>
+              <td>/opt</td>
+              <td>Optional files such as vendor supplied application programs should be located here.</td>
+            </tr>
+            <tr>
+              <td>/root</td>
+              <td>This is not the root (/) filesystem. It is the home directory for the root user.</td>
+            </tr>
+            <tr>
+              <td>/sbin</td>
+              <td>System binary files. These are executables used for system administration.</td>
+            </tr>
+            <tr>
+              <td>/tmp</td>
+              <td>Temporary directory. Used by the operating system and many programs to store temporary files.
+                 Users may also store files here temporarily.
+                  Note that files stored here may be deleted at any time without prior notice.</td>
+            </tr>
+            <tr>
+              <td>/usr</td>
+              <td>These are shareable, read-only files, including executable binaries and libraries,
+                 man files, and other types of documentation.</td>
+            </tr>
+            <tr>
+              <td>/var</td>
+              <td>Variable data files are stored here. This can include things like log files, MySQL,
+                 and other database files, web server data files, email inboxes, and much more.</td>
             </tr>
           </table>
-          <p>Malis percipitur an pro. Pro aperiam persequeris at, at sonet sensibus mei, id mea postulant definiebas concludaturque. Id qui malis abhorreant, mazim melius quo et. At eam altera dolorum, case dicant lobortis ius te, ad vel affert oportere reprehendunt. Quo no verterem deseruisse, mea brute postea te, ne per tacimates suavitate vituperatoribus.</p>
-          <hr />
+          <center style="margin-top: -3%;">
+            <a style="font-size: 14px;">Table 1: The top level of the Linux filesystem hierarchy.</a>
+          </center>
+          <br>
+          <p>The directories and their subdirectories shown in Table 1, along with their subdirectories, that have a teal background are considered an integral part of the root filesystem. That is, they cannot be created as a separate filesystem and mounted at startup time. This is because they (specifically, their contents) must be present at boot time in order for the system to boot properly.
+            The /media and /mnt directories are part of the root filesystem, but they should never contain any data. Rather, they are simply temporary mount points.
+            The remaining directories, those that have no background color in Table 1 do not need to be present during the boot sequence, but will be mounted later, during the startup sequence that prepares the host to perform useful work.
+            Be sure to refer to the official <a href="http://www.pathname.com/fhs/" style="color: crimson;">Linux Filesystem Hierarchy Standard (FHS)</a> web page for details about each of these directories and their many subdirectories. Wikipedia also has a good description of the <a href="https://en.wikipedia.org/wiki/Filesystem_Hierarchy_Standard" style="color: crimson;">FHS</a>. This standard should be followed as closely as possible to ensure operational and functional consistency. Regardless of the filesystem types used on a host, this hierarchical directory structure is the same.
+          </p>
+          <h4 class="section__title">Linux unified directory structure</h4>
+          <p>
+            In some non-Linux PC operating systems, if there are multiple physical hard drives or multiple partitions, each disk or partition is assigned a drive letter. It is necessary to know on which hard drive a file or program is located, such as C: or D:. Then you issue the drive letter as a command, D:, for example, to change to the D: drive, and then you use the cd command to change to the correct directory to locate the desired file. Each hard drive has its own separate and complete directory tree.
+          </p>
+          <p>
+            The Linux filesystem unifies all physical hard drives and partitions into a single directory structure. It all starts at the top–the root (/) directory. All other directories and their subdirectories are located under the single Linux root directory. This means that there is only one single directory tree in which to search for files and programs.
+          </p>
+          <p>
+            This can work only because a filesystem, such as /home, /tmp, /var, /opt, or /usr can be created on separate physical hard drives, a different partition, or a different logical volume from the / (root) filesystem and then be mounted on a mountpoint (directory) as part of the root filesystem tree. Even removable drives such as a USB thumb drive or an external USB or ESATA hard drive will be mounted onto the root filesystem and become an integral part of that directory tree.
+          </p>
+          <p>
+            One good reason to do this is apparent during an upgrade from one version of a Linux distribution to another, or changing from one distribution to another. In general, and aside from any upgrade utilities like dnf-upgrade in Fedora, it is wise to occasionally reformat the hard drive(s) containing the operating system during an upgrade to positively remove any cruft that has accumulated over time. If /home is part of the root filesystem it will be reformatted as well and would then have to be restored from a backup. By having /home as a separate filesystem, it will be known to the installation program as a separate filesystem and formatting of it can be skipped. This can also apply to /var where database, email inboxes, website, and other variable user and system data are stored.
+          </p>
+          <p>
+            There are other reasons for maintaining certain parts of the Linux directory tree as separate filesystems. For example, a long time ago, when I was not yet aware of the potential issues surrounding having all of the required Linux directories as part of the / (root) filesystem, I managed to fill up my home directory with a large number of very big files. Since neither the /home directory nor the /tmp directory were separate filesystems but simply subdirectories of the root filesystem, the entire root filesystem filled up. There was no room left for the operating system to create temporary files or to expand existing data files. At first, the application programs started complaining that there was no room to save files, and then the OS itself started to act very strangely. Booting to single-user mode and clearing out the offending files in my home directory allowed me to get going again. I then reinstalled Linux using a pretty standard multi-filesystem setup and was able to prevent complete system crashes from occurring again.
+          </p>
+          <p>
+            I once had a situation where a Linux host continued to run, but prevented
+             the user from logging in using the GUI desktop. I was able to log in using the
+              command line interface (CLI) locally using one of the <a href="https://en.wikipedia.org/wiki/Virtual_console" style="color: crimson;">virtual consoles</a>, and
+               remotely using SSH. The problem was that the /tmp filesystem had filled up and some temporary
+                files required by the GUI desktop could not be created at login time. Because the CLI login did 
+                not require files to be created in /tmp, the lack of space there did not prevent me from logging
+                 in using the CLI. In this case, the /tmp directory was a separate filesystem and there was plenty of space 
+                 available in the volume group the /tmp logical volume was a part of. I simply <a href="https://opensource.com/business/16/9/linux-users-guide-lvm" style="color: crimson;">expanded the /tmp logical volume</a>
+                  to a size that accommodated my fresh understanding of the amount of temporary file space needed on that host
+                   and the problem was solved. Note that this solution did not require a reboot, and as soon as the /tmp
+                    filesystem was enlarged the user was able to login to the desktop.
+          </p>
+          <p>
+            Another situation occurred while I was working as a lab administrator at one large technology company. One of our developers had installed an application in the wrong location (/var). The application was crashing because the /var filesystem was full and the log files, which are stored in /var/log on that filesystem, could not be appended with new messages due to the lack of space. However, the system remained up and running because the critical / (root) and /tmp filesystems did not fill up. Removing the offending application and reinstalling it in the /opt filesystem resolved that problem.
+          </p>
+          <h4 class="section__title">Filesystem types</h4>
+          <p>
+            Linux supports reading around 100 partition types; it can create and write to only
+             a few of these. But it is possible—and very common—to mount filesystems of
+              different types on the same root filesystem. In this context we are talking about filesystems in terms of the
+               structures and metadata required to store and manage the user data on a partition of a hard drive or a logical
+                volume. The complete list of filesystem partition types recognized by the Linux fdisk command is provided here,
+                 so that you can get a feel for the high degree of compatibility that Linux has with very many types of systems.
+          </p>
+          <pre><span style="font-size:12px;"> 
+            0  Empty           24  NEC DOS         81  Minix / old Lin bf  Solaris
+            1  FAT12           27  Hidden NTFS Win 82  Linux swap / So c1  DRDOS/sec (FAT-
+            2  XENIX root      39  Plan 9          83  Linux           c4  DRDOS/sec (FAT-
+            3  XENIX usr       3c  PartitionMagic  84  OS/2 hidden or  c6  DRDOS/sec (FAT-
+            4  FAT16 &lt;32M      40  Venix 80286     85  Linux extended  c7  Syrinx
+            5  Extended        41  PPC PReP Boot   86  NTFS volume set da  Non-FS data
+            6  FAT16           42  SFS             87  NTFS volume set db  CP/M / CTOS / .
+            7  HPFS/NTFS/exFAT 4d  QNX4.x          88  Linux plaintext de  Dell Utility
+            8  AIX             4e  QNX4.x 2nd part 8e  Linux LVM       df  BootIt
+            9  AIX bootable    4f  QNX4.x 3rd part 93  Amoeba          e1  DOS access
+            a  OS/2 Boot Manag 50  OnTrack DM      94  Amoeba BBT      e3  DOS R/O
+            b  W95 FAT32       51  OnTrack DM6 Aux 9f  BSD/OS          e4  SpeedStor
+            c  W95 FAT32 (LBA) 52  CP/M            a0  IBM Thinkpad hi ea  Rufus alignment
+            e  W95 FAT16 (LBA) 53  OnTrack DM6 Aux a5  FreeBSD         eb  BeOS fs
+            f  W95 Ext'd (LBA) 54  OnTrackDM6      a6  OpenBSD         ee  GPT
+           10  OPUS            55  EZ-Drive        a7  NeXTSTEP        ef  EFI (FAT-12/16/
+           11  Hidden FAT12    56  Golden Bow      a8  Darwin UFS      f0  Linux/PA-RISC b
+           12  Compaq diagnost 5c  Priam Edisk     a9  NetBSD          f1  SpeedStor
+           14  Hidden FAT16 &lt;3 61  SpeedStor       ab  Darwin boot     f4  SpeedStor
+           16  Hidden FAT16    63  GNU HURD or Sys af  HFS / HFS+      f2  DOS secondary
+           17  Hidden HPFS/NTF 64  Novell Netware  b7  BSDI fs         fb  VMware VMFS
+           18  AST SmartSleep  65  Novell Netware  b8  BSDI swap       fc  VMware VMKCORE
+           1b  Hidden W95 FAT3 70  DiskSecure Mult bb  Boot Wizard hid fd  Linux raid auto
+           1c  Hidden W95 FAT3 75  PC/IX           bc  Acronis FAT32 L fe  LANstep
+           1e  Hidden W95 FAT1 80  Old Minix       be  Solaris boot    ff  BBT</span>
+           </pre>
+           <p>
+            The main purpose in supporting the ability to read so many partition types is to allow for compatibility
+             and at least some interoperability with other computer systems' filesystems. The choices available when
+              creating a new filesystem with Fedora are shown in the following list.
+           </p>
+           <ul>
+            <li>btrfs</li>
+            <li><b>cramfs</b></li>
+            <li><b>ext2</b></li>
+            <li><b>ext3</b></li>
+            <li><b>ext4</b></li>
+            <li>fat</li>
+            <li>gfs2</li>
+            <li>hfsplus</li>
+            <li>minix</li>
+            <li><b>msdos</b></li>
+            <li>ntfs</li>
+            <li>reiserfs</li>
+            <li><b>vfat</b></li>
+            <li>xfs</li>
+          </ul>
+          <p>
+            Other distributions support creating different filesystem types. For example, CentOS 6 supports creating only those filesystems highlighted in bold in the above list.
+          </p>
+          <h4 class="section__title">Mounting</h4>
+          <p>
+            The term "to mount" a filesystem in Linux refers back to the early days of computing when a tape or removable disk pack would need to be physically mounted on an appropriate drive device. After being physically placed on the drive, the filesystem on the disk pack would be logically mounted by the operating system to make the contents available for access by the OS, application programs and users.
+          </p>
+          <p>
+            A mount point is simply a directory, like any other, that is created as part of the root filesystem. So, for example, the home filesystem is mounted on the directory /home. Filesystems can be mounted at mount points on other non-root filesystems but this is less common.
+          </p>
+          <p>
+            The Linux root filesystem is mounted on the root directory (/) very early in the boot sequence. Other filesystems are mounted later, by the Linux startup programs, either rc under SystemV or by systemd in newer Linux releases. Mounting of filesystems during the startup process is managed by the /etc/fstab configuration file. An easy way to remember that is that fstab stands for "file system table," and it is a list of filesystems that are to be mounted, their designated mount points, and any options that might be needed for specific filesystems.
+          </p>
+          <p>
+            Filesystems are mounted on an existing directory/mount point using the mount command. In general, any directory that is used as a mount point should be empty and not have any other files contained in it. Linux will not prevent users from mounting one filesystem over one that is already there or on a directory that contains files. If you mount a filesystem on an existing directory or filesystem, the original contents will be hidden and only the content of the newly mounted filesystem will be visible.
+          </p>
+          <h4 class="section__title">Conclusion</h4>
+          <p>
+            I hope that some of the possible confusion surrounding the term filesystem has been cleared up by this article. It took a long time and a very helpful mentor for me to truly understand and appreciate the complexity, elegance, and functionality of the Linux filesystem in all of its meanings.
+          </p>
+          <p>
+            If you have questions, please add them to the comments below and I will try to answer them.
+          </p>
+          <p>
+            Another important concept is that for Linux, everything is a file. This concept has some interesting and important practical applications for users and system admins.
+          </p>
+          <p>
+            Thank you very much "<a href="https://opensource.com/users/dboth" style="color: crimson;">Mr.David Both</a>" for this valuable and informative article.
+          </p>
         </section>
+        <hr style="color: #fe6a6b; border-width: 1px; border-color: #fe6a6a6c; ">
         <section class="js-section">
-          <h3 class="section__title">Keybindings</h3>
-          <p>Lorem ipsum dolor sit amet, scripta tibique indoctum sit ei, mel inani aeterno ad. Facer oratio ex per. At eam movet verear, in sea brute patrioque disputando, usu nonumes torquatos an. Ex his quaerendum intellegebat, ut vel homero accusam. Eum at debet tibique, in vocibus temporibus adversarium sed. Porro verear eu vix, ne usu tation vituperata.</p>
-          <p>Malis percipitur an pro. Pro aperiam persequeris at, at sonet sensibus mei, id mea postulant definiebas concludaturque. Id qui malis abhorreant, mazim melius quo et. At eam altera dolorum, case dicant lobortis ius te, ad vel affert oportere reprehendunt. Quo no verterem deseruisse, mea brute postea te, ne per tacimates suavitate vituperatoribus.</p>
-          <p>Malis percipitur an pro. Pro aperiam persequeris at, at sonet sensibus mei, id mea postulant definiebas concludaturque. Id qui malis abhorreant, mazim melius quo et. At eam altera dolorum, case dicant lobortis ius te, ad vel affert oportere reprehendunt. Quo no verterem deseruisse, mea brute postea te, ne per tacimates suavitate vituperatoribus.</p>
-          <hr />
-        </section>
+          <h3 class="section__title">Base Choice</h3>
+          <p>
+            In the previous article, we got acquainted with the Linux file system and talked a bit about its structure and how it works, because to get started, we needed to be at least familiar with the Linux file system.
+          </p>
+          <p>
+            To get started, we need to base our distribution on a root file system from existing Linux distributions,
+             and then develop and customize it.
+          </p>
+          <p>
+            I use Ubuntu Base as the root filesystem in this guide.
+             You can use other distributions root file system such as Debian , Arch , Gentoo & etc.
+             Ubuntu has officially released its RootFS( Root File System ) and you can download it. For other Linux distributions such as Debian,
+              you must create a root filesystem from that distribution.
+          </p>
+          <p>
+            I have not forgotten to say that in addition to the root file system,
+             we must also download the Linux kernel and install it on the root file system.
+          </p>
+          <p>
+            I have put the relevant links for you so that you can download these items more easily.
+          </p>
+          <br>
+          <b><a href="http://cdimage.ubuntu.com/ubuntu-base/releases/21.04/release/ubuntu-base-21.04-base-amd64.tar.gz" style="color: coral;">Download Ubuntu Base 21.04 for amd64</a></b>
+        <br>
+        <br>
+        <b><a href="https://kernel.org" style="color: goldenrod;">Download Linux Kernel</a></b>
+        <br>
+        <br>
+        <b><a href="https://github.com/jubinson/debian-rootfs" style="color: teal;">How to Create RootFS From Debian</a> ( Thanks to <a href="https://github.com/jubinson" style="color: crimson;">Mr.David Robinson</a> )</b>
+        <p>
+          I want to develop my distribution under Ubuntu Base 21.04 with amd64 architecture.
+           If you want to develop your distribution for a particular architecture
+            or other verson of Ubuntu Base you can get Ubuntu Base for other architectures and
+             other verson of Ubuntu Base from this <a href="http://cdimage.ubuntu.com/ubuntu-base/releases/" style="color: crimson;">section</a>.
+        </p>
+      </section>
         <section class="js-section">
-          <h3 class="section__title">Issues</h3>
-          <p>Lorem ipsum dolor sit amet, scripta tibique indoctum sit ei, mel inani aeterno ad. Facer oratio ex per. At eam movet verear, in sea brute patrioque disputando, usu nonumes torquatos an. Ex his quaerendum intellegebat, ut vel homero accusam. Eum at debet tibique, in vocibus temporibus adversarium sed. Porro verear eu vix, ne usu tation vituperata.</p>
-          <p>Malis percipitur an pro. Pro aperiam persequeris at, at sonet sensibus mei, id mea postulant definiebas concludaturque. Id qui malis abhorreant, mazim melius quo et. At eam altera dolorum, case dicant lobortis ius te, ad vel affert oportere reprehendunt. Quo no verterem deseruisse, mea brute postea te, ne per tacimates suavitate vituperatoribus.</p>
+          <hr style="color: #fe6a6b; border-width: 1px; border-color: #fe6a6a6c; ">
+          <h3 class="section__title">Install Base Root File System</h3>
+          <p>Preparing...</p>
         </section>
       </article>
     </div>
